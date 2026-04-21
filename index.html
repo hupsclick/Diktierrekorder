@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Hupsclick">
+    <meta name="publisher" content="Hupsclick">
+    <meta name="description" content="HUPSCLICK DIKTIERGERÄT">
+    <meta name="keywords" content="HUPSCLICK, DIKTIERGERÄT, Deutsch">
+    <meta name="copyright" content="Hupsclick">
+    <meta property="og:title" content="HUPSCLICK DIKTIERGERÄT">
+    <meta property="og:description" content="HUPSCLICK DIKTIERGERÄT">
+    <meta property="og:type" content="website">
+    <link rel="shortcut icon" href="assets/icon.ico">
+  <title>Diktiergerät PRO</title>
+ <style>
+:root {
+  --glow: 0 0 16px var(--glass-accent), 0 0 32px var(--cosmic-purple);
+  --glass-accent: #aee1f9;
+  --cosmic-purple: #0004;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #141414;
+  padding: 20px;
+}
+
+/* ================= FIX ================= */
+.recorder-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  padding: 25px;
+  border-radius: 20px;
+  background: #514637;
+  box-shadow: 0 3px 3px #B09878;
+  border: 3px solid #B09878;
+  z-index: 100;
+}
+
+/* ======================================= */
+
+/* ================= COPYRIGHT ================= */
+.copyright {
+  position: absolute;
+  bottom: 805px; /* sitzt direkt über dem unteren Rand */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #e6d3a3;
+  opacity: 0.8;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  z-index: 99999;
+}
+
+/* ============================================ */
+
+h2 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 30px;
+  font-size: 28px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.display-panel {
+  background: #0f0f1e;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 6px 6px #0004;
+  border: 6px solid;
+}
+
+.status {
+  color: #00ff88;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), var(--glow);
+}
+
+.timer {
+  font-size: 48px;
+  text-align: center;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.visualizer {
+  height: 60px;
+  background: #0a0a15;
+  border-radius: 8px;
+  margin-top: 15px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 6px #0004;
+  border: 6px solid;
+}
+
+.visualizer canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.cassette-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 6px 6px #0004;
+  border: 6px solid;
+  padding: 20px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cassette {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), var(--glow);
+}
+
+.cassette.spinning #leftReel,
+.cassette.spinning #rightReel {
+  animation: spin 2s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box; /* 🔥 DAS ist der Fix */
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  flex: 1;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 6px #0004;
+}
+
+.record-btn {
+  background: linear-gradient(145deg, #ff4757, #ff3838);
+  color: white;
+}
+
+.record-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(255, 71, 87, 0.4);
+}
+
+.record-btn.recording {
+  background: linear-gradient(145deg, #666, #555);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.play-btn, .save-btn {
+  background: linear-gradient(145deg, #00ff88, #00cc6a);
+  color: #0f0f1e;
+}
+
+.play-btn:hover, .save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(0, 255, 136, 0.4);
+}
+
+.btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.recordings-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  max-height: 200px;
+  box-shadow: 0 6px 6px #0004;
+  border: 6px solid;
+  overflow-y: auto;
+}
+
+.recordings-title {
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.recording-item {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recording-name {
+  color: #fff;
+  font-size: 14px;
+}
+
+.recording-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.small-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #00ff88;
+  color: #0f0f1e;
+  font-weight: bold;
+}
+
+.small-btn:hover {
+  background: #00cc6a;
+}
+
+.delete-btn {
+  background: #ff4757;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #ff3838;
+}
+
+.no-recordings {
+  color: #669966;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+     @media (max-width: 900px) {
+	.copyright {
+	  bottom: 290px; /* sitzt direkt über dem unteren Rand */
+	}
+ }
+    @media (max-width: 768px) {
+	.copyright {
+	  bottom: 745px; /* sitzt direkt über dem unteren Rand */
+	}
+ }
+
+</style>
+</head>
+<body>
+<div class="recorder-container">
+  <h2>🎙️ Diktiergerät</h2>
+ 
+  <div class="display-panel">
+    <p class="status" id="status">Bereit zur Aufnahme</p>
+    <div class="timer" id="timer">00:00</div>
+    <div class="visualizer">
+      <canvas id="visualizer"></canvas>
+    </div>
+  </div>
+  
+  <div class="cassette-section">
+    <svg class="cassette" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Kassetten-Körper -->
+      <rect x="10" y="20" width="280" height="140" rx="5" fill="#2a2a3e" stroke="#00ff88" stroke-width="2"/>
+      
+      <!-- Label -->
+      <rect x="30" y="40" width="240" height="60" rx="2" fill="#1a1a2e"/>
+      <text x="150" y="65" text-anchor="middle" fill="#00ff88" font-size="14" font-family="Arial">DIKTIERGERÄT</text>
+      <text x="150" y="85" text-anchor="middle" fill="#666" font-size="10" font-family="Arial">REC-01-26</text>
+      
+      <!-- Linke Spule -->
+      <g id="leftReel">
+        <circle cx="80" cy="130" r="25" fill="#1a1a2e" stroke="#00ff88" stroke-width="2"/>
+        <circle cx="80" cy="130" r="20" fill="#0f0f1e"/>
+        <circle cx="80" cy="130" r="8" fill="#2a2a3e"/>
+        <!-- Speichen -->
+        <line x1="80" y1="110" x2="80" y2="122" stroke="#00ff88" stroke-width="2"/>
+        <line x1="80" y1="138" x2="80" y2="150" stroke="#00ff88" stroke-width="2"/>
+        <line x1="60" y1="130" x2="72" y2="130" stroke="#00ff88" stroke-width="2"/>
+        <line x1="88" y1="130" x2="100" y2="130" stroke="#00ff88" stroke-width="2"/>
+        <line x1="66" y1="116" x2="74" y2="124" stroke="#00ff88" stroke-width="2"/>
+        <line x1="86" y1="136" x2="94" y2="144" stroke="#00ff88" stroke-width="2"/>
+        <line x1="94" y1="116" x2="86" y2="124" stroke="#00ff88" stroke-width="2"/>
+        <line x1="74" y1="136" x2="66" y2="144" stroke="#00ff88" stroke-width="2"/>
+      </g>
+      
+      <!-- Rechte Spule -->
+      <g id="rightReel">
+        <circle cx="220" cy="130" r="25" fill="#1a1a2e" stroke="#00ff88" stroke-width="2"/>
+        <circle cx="220" cy="130" r="20" fill="#0f0f1e"/>
+        <circle cx="220" cy="130" r="8" fill="#2a2a3e"/>
+        <!-- Speichen -->
+        <line x1="220" y1="110" x2="220" y2="122" stroke="#00ff88" stroke-width="2"/>
+        <line x1="220" y1="138" x2="220" y2="150" stroke="#00ff88" stroke-width="2"/>
+        <line x1="200" y1="130" x2="212" y2="130" stroke="#00ff88" stroke-width="2"/>
+        <line x1="228" y1="130" x2="240" y2="130" stroke="#00ff88" stroke-width="2"/>
+        <line x1="206" y1="116" x2="214" y2="124" stroke="#00ff88" stroke-width="2"/>
+        <line x1="226" y1="136" x2="234" y2="144" stroke="#00ff88" stroke-width="2"/>
+        <line x1="234" y1="116" x2="226" y2="124" stroke="#00ff88" stroke-width="2"/>
+        <line x1="214" y1="136" x2="206" y2="144" stroke="#00ff88" stroke-width="2"/>
+      </g>
+      
+      <!-- Band zwischen Spulen -->
+      <rect x="105" y="125" width="90" height="10" fill="#333"/>
+    </svg>
+  </div>
+  
+  <div class="controls">
+    <button class="btn record-btn" id="recordBtn">Aufnahme</button>
+    <button class="btn save-btn" id="saveBtn" disabled>Speichern</button>
+  </div>
+  
+  <div class="recordings-section">
+    <div class="recordings-title">Gespeicherte Aufnahmen</div>
+    <div id="recordingsList">
+      <div class="no-recordings">Keine Aufnahmen vorhanden</div>
+    </div>
+  </div>
+</div>
+  <!-- ✅ COPYRIGHT -->
+  <div class="copyright">© bei Manfred Häcker</div>
+<script>
+  let isRecording = false;
+  let recorder;
+  let audioChunks = [];
+  let timerInterval;
+  let timerSeconds = 0;
+  let audioContext;
+  let analyser;
+  let dataArray;
+  let bufferLength;
+  let animationId;
+  let currentAudioBlob = null;
+  let savedRecordings = [];
+  let currentPlayingAudio = null;
+  const cassette = document.querySelector('.cassette');
+  
+  const statusEl = document.getElementById('status');
+  const timerEl = document.getElementById('timer');
+  const recordBtn = document.getElementById('recordBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const canvas = document.getElementById('visualizer');
+  const canvasCtx = canvas.getContext('2d');
+  const recordingsList = document.getElementById('recordingsList');
+  
+  // Canvas Größe setzen
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  
+  // Audio Context initialisieren
+  async function initRecorder() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // Audio Context erstellen
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      bufferLength = analyser.frequencyBinCount;
+      dataArray = new Uint8Array(bufferLength);
+      
+      // Audio Stream mit Analyser verbinden
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+      
+      // MediaRecorder initialisieren
+      recorder = new MediaRecorder(stream);
+      
+      recorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+      
+      recorder.onstop = () => {
+        currentAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        saveBtn.disabled = false;
+      };
+      
+      drawVisualizer();
+    } catch (err) {
+      console.error('Fehler beim Zugriff auf das Mikrofon:', err);
+      statusEl.textContent = 'Mikrofon-Zugriff verweigert';
+    }
+  }
+  
+  // Visualizer zeichnen
+  function drawVisualizer() {
+    animationId = requestAnimationFrame(drawVisualizer);
+    
+    analyser.getByteFrequencyData(dataArray);
+    
+    canvasCtx.fillStyle = '#0a0a15';
+    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    const barWidth = (canvas.width / bufferLength) * 2.5;
+    let barHeight;
+    let x = 0;
+    
+    for (let i = 0; i < bufferLength; i++) {
+      barHeight = (dataArray[i] / 255) * canvas.height;
+      
+      const gradient = canvasCtx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
+      gradient.addColorStop(0, '#0099ff');
+      gradient.addColorStop(1, '#00ff88');
+      
+      canvasCtx.fillStyle = gradient;
+      canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+      
+      x += barWidth + 1;
+    }
+  }
+  
+  // Aufnahme starten
+  function startRecording() {
+    audioChunks = [];
+    timerSeconds = 0;
+    recorder.start();
+    isRecording = true;
+    statusEl.textContent = '⏺ Aufnahme läuft...';
+    recordBtn.textContent = 'Stoppen';
+    recordBtn.classList.add('recording');
+    saveBtn.disabled = true;
+    
+    // Kassetten-Animation starten
+    cassette.classList.add('spinning');
+    
+    timerInterval = setInterval(() => {
+      timerSeconds++;
+      const minutes = Math.floor(timerSeconds / 60);
+      const seconds = timerSeconds % 60;
+      timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }, 1000);
+  }
+  
+  // Aufnahme stoppen
+  function stopRecording() {
+    recorder.stop();
+    clearInterval(timerInterval);
+    isRecording = false;
+    statusEl.textContent = '⏸ Aufnahme gestoppt';
+    recordBtn.textContent = 'Aufnahme';
+    recordBtn.classList.remove('recording');
+    
+    // Kassetten-Animation stoppen
+    cassette.classList.remove('spinning');
+  }
+  
+  // Aufnahme abspielen (wird nicht mehr verwendet, aber für Kompatibilität beibehalten)
+  function playRecording() {
+    if (!currentAudioBlob) {
+      console.error('Keine Aufnahme vorhanden');
+      return;
+    }
+    
+    // Stoppe eventuell laufendes Audio
+    if (currentPlayingAudio) {
+      currentPlayingAudio.pause();
+      currentPlayingAudio = null;
+      cassette.classList.remove('spinning');
+    }
+    
+    const audioUrl = URL.createObjectURL(currentAudioBlob);
+    currentPlayingAudio = new Audio(audioUrl);
+    
+    // Kassetten-Animation starten
+    cassette.classList.add('spinning');
+    statusEl.textContent = '▶ Wiedergabe...';
+    
+    currentPlayingAudio.play().catch(err => {
+      console.error('Fehler beim Abspielen:', err);
+      statusEl.textContent = 'Fehler bei der Wiedergabe';
+      cassette.classList.remove('spinning');
+    });
+    
+    currentPlayingAudio.onended = () => {
+      statusEl.textContent = 'Bereit zur Aufnahme';
+      cassette.classList.remove('spinning');
+      currentPlayingAudio = null;
+    };
+    
+    currentPlayingAudio.onerror = () => {
+      statusEl.textContent = 'Fehler bei der Wiedergabe';
+      cassette.classList.remove('spinning');
+      console.error('Audio-Fehler');
+      currentPlayingAudio = null;
+    };
+  }
+  // Aufnahme speichern
+  function saveRecording() {
+    if (currentAudioBlob) {
+      const timestamp = new Date().toLocaleString('de-DE');
+      const recording = {
+        id: Date.now(),
+        name: `Aufnahme ${timestamp}`,
+        blob: currentAudioBlob,
+        duration: timerEl.textContent
+      };
+      
+      savedRecordings.push(recording);
+      updateRecordingsList();
+      
+      statusEl.textContent = '✓ Aufnahme gespeichert';
+      setTimeout(() => {
+        statusEl.textContent = 'Bereit zur Aufnahme';
+      }, 2000);
+    }
+  }
+  
+  // Liste der Aufnahmen aktualisieren
+  function updateRecordingsList() {
+    if (savedRecordings.length === 0) {
+      recordingsList.innerHTML = '<div class="no-recordings">Keine Aufnahmen vorhanden</div>';
+      return;
+    }
+    
+    recordingsList.innerHTML = savedRecordings.map(rec => `
+      <div class="recording-item">
+        <div class="recording-name">${rec.name} (${rec.duration})</div>
+        <div class="recording-actions">
+          <button class="small-btn" onclick="playRecording(${rec.id})">▶</button>
+          <button class="small-btn" onclick="downloadRecording(${rec.id})">⬇</button>
+          <button class="small-btn delete-btn" onclick="deleteRecording(${rec.id})">🗑</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  // Gespeicherte Aufnahme abspielen
+  window.playRecording = function(id) {
+    const recording = savedRecordings.find(r => r.id === id);
+    if (!recording) {
+      console.error('Aufnahme nicht gefunden');
+      return;
+    }
+    
+    // Stoppe eventuell laufendes Audio
+    if (currentPlayingAudio) {
+      currentPlayingAudio.pause();
+      currentPlayingAudio = null;
+      cassette.classList.remove('spinning');
+    }
+    
+    const audioUrl = URL.createObjectURL(recording.blob);
+    currentPlayingAudio = new Audio(audioUrl);
+    
+    // Kassetten-Animation starten
+    cassette.classList.add('spinning');
+    statusEl.textContent = `▶ Spiele "${recording.name}"`;
+    
+    currentPlayingAudio.play().catch(err => {
+      console.error('Fehler beim Abspielen:', err);
+      statusEl.textContent = 'Fehler bei der Wiedergabe';
+      cassette.classList.remove('spinning');
+    });
+    
+    currentPlayingAudio.onended = () => {
+      statusEl.textContent = 'Bereit zur Aufnahme';
+      cassette.classList.remove('spinning');
+      currentPlayingAudio = null;
+    };
+    
+    currentPlayingAudio.onerror = () => {
+      statusEl.textContent = 'Fehler bei der Wiedergabe';
+      cassette.classList.remove('spinning');
+      console.error('Audio-Fehler');
+      currentPlayingAudio = null;
+    };
+  };
+  
+  // Aufnahme herunterladen
+  window.downloadRecording = function(id) {
+    const recording = savedRecordings.find(r => r.id === id);
+    if (recording) {
+      const url = URL.createObjectURL(recording.blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${recording.name}.webm`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+  
+  // Aufnahme löschen
+  window.deleteRecording = function(id) {
+    savedRecordings = savedRecordings.filter(r => r.id !== id);
+    updateRecordingsList();
+  };
+  
+  // Event Listeners
+  recordBtn.addEventListener('click', () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  });
+  
+  saveBtn.addEventListener('click', saveRecording);
+  
+  // Initialisierung
+  initRecorder();
+
+</script>
+</body>
+</html>
