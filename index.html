@@ -11,7 +11,22 @@
   <meta property="og:title" content="HUPSCLICK DIKTIERGERÄT">
   <meta property="og:description" content="HUPSCLICK DIKTIERGERÄT">
   <meta property="og:type" content="website">
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#00ff88">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Diktiergerät">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Scharfe Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icon-512.png">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icon-192.png">
   <link rel="shortcut icon" href="assets/icon.ico">
+
   <title>Diktiergerät PRO</title>
 <style>
 :root {
@@ -230,7 +245,6 @@ h2 {
   padding: 20px;
   font-style: italic;
 }
-
 /* ========== Kaffee-Button – fest unten rechts im Container ========== */
 .hud-coffee-btn {
   position: absolute;
@@ -262,7 +276,6 @@ h2 {
 .hud-coffee-btn:active {
   transform: scale(0.96);
 }
-
 /* Coffee Modal */
 .coffee-modal-overlay {
   position: fixed;
@@ -417,7 +430,6 @@ h2 {
   font-size: 11px;
   cursor: pointer;
 }
-
 @media (max-width: 480px) {
   .recorder-container {
     padding-bottom: 65px;
@@ -433,7 +445,6 @@ h2 {
 </style>
 </head>
 <body>
-
 <div class="recorder-container">
   <h2>🎙️ Diktiergerät <span style="font-size: 0.35em; font-style: italic; font-weight: 200; color: #BBA180;"><p>© Hupsclick Manfred Häcker</span></h2>
 </p>
@@ -444,7 +455,6 @@ h2 {
       <canvas id="visualizer"></canvas>
     </div>
   </div>
-
   <div class="cassette-section">
     <svg class="cassette" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
       <!-- Kassetten-Körper -->
@@ -491,19 +501,16 @@ h2 {
       <rect x="105" y="125" width="90" height="10" fill="#333"/>
     </svg>
   </div>
-
   <div class="controls">
     <button class="btn record-btn" id="recordBtn">Aufnahme</button>
     <button class="btn save-btn" id="saveBtn" disabled>Speichern</button>
   </div>
-
   <div class="recordings-section">
     <div class="recordings-title">Gespeicherte Aufnahmen</div>
     <div id="recordingsList">
       <div class="no-recordings">Keine Aufnahmen vorhanden</div>
     </div>
   </div>
-
   <!-- Kaffee-Button fest unten rechts im Container -->
   <button
     id="coffeeHUD"
@@ -515,7 +522,6 @@ h2 {
     ☕ KAFFEE
   </button>
 </div>
-
 <!-- Coffee Modal -->
 <div
   id="coffeeModal"
@@ -580,7 +586,6 @@ h2 {
     </footer>
   </section>
 </div>
-
 <script>
   let isRecording = false;
   let recorder;
@@ -596,7 +601,6 @@ h2 {
   let savedRecordings = [];
   let currentPlayingAudio = null;
   const cassette = document.querySelector('.cassette');
-
   const statusEl = document.getElementById('status');
   const timerEl = document.getElementById('timer');
   const recordBtn = document.getElementById('recordBtn');
@@ -604,69 +608,52 @@ h2 {
   const canvas = document.getElementById('visualizer');
   const canvasCtx = canvas.getContext('2d');
   const recordingsList = document.getElementById('recordingsList');
-
   // Canvas Größe setzen
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
-
   // Audio Context initialisieren
   async function initRecorder() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       analyser = audioContext.createAnalyser();
       analyser.fftSize = 256;
       bufferLength = analyser.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
-
       const source = audioContext.createMediaStreamSource(stream);
       source.connect(analyser);
-
       recorder = new MediaRecorder(stream);
-
       recorder.ondataavailable = (event) => {
         audioChunks.push(event.data);
       };
-
       recorder.onstop = () => {
         currentAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         saveBtn.disabled = false;
       };
-
       drawVisualizer();
     } catch (err) {
       console.error('Fehler beim Zugriff auf das Mikrofon:', err);
       statusEl.textContent = 'Mikrofon-Zugriff verweigert';
     }
   }
-
   function drawVisualizer() {
     animationId = requestAnimationFrame(drawVisualizer);
-
     analyser.getByteFrequencyData(dataArray);
-
     canvasCtx.fillStyle = '#0a0a15';
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
     const barWidth = (canvas.width / bufferLength) * 2.5;
     let barHeight;
     let x = 0;
-
     for (let i = 0; i < bufferLength; i++) {
       barHeight = (dataArray[i] / 255) * canvas.height;
-
       const gradient = canvasCtx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
       gradient.addColorStop(0, '#0099ff');
       gradient.addColorStop(1, '#00ff88');
-
       canvasCtx.fillStyle = gradient;
       canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-
       x += barWidth + 1;
     }
   }
-
   function startRecording() {
     audioChunks = [];
     timerSeconds = 0;
@@ -676,9 +663,7 @@ h2 {
     recordBtn.textContent = 'Stoppen';
     recordBtn.classList.add('recording');
     saveBtn.disabled = true;
-
     cassette.classList.add('spinning');
-
     timerInterval = setInterval(() => {
       timerSeconds++;
       const minutes = Math.floor(timerSeconds / 60);
@@ -686,7 +671,6 @@ h2 {
       timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }, 1000);
   }
-
   function stopRecording() {
     recorder.stop();
     clearInterval(timerInterval);
@@ -694,40 +678,32 @@ h2 {
     statusEl.textContent = '⏸ Aufnahme gestoppt';
     recordBtn.textContent = 'Aufnahme';
     recordBtn.classList.remove('recording');
-
     cassette.classList.remove('spinning');
   }
-
   function playRecording() {
     if (!currentAudioBlob) {
       console.error('Keine Aufnahme vorhanden');
       return;
     }
-
     if (currentPlayingAudio) {
       currentPlayingAudio.pause();
       currentPlayingAudio = null;
       cassette.classList.remove('spinning');
     }
-
     const audioUrl = URL.createObjectURL(currentAudioBlob);
     currentPlayingAudio = new Audio(audioUrl);
-
     cassette.classList.add('spinning');
     statusEl.textContent = '▶ Wiedergabe...';
-
     currentPlayingAudio.play().catch(err => {
       console.error('Fehler beim Abspielen:', err);
       statusEl.textContent = 'Fehler bei der Wiedergabe';
       cassette.classList.remove('spinning');
     });
-
     currentPlayingAudio.onended = () => {
       statusEl.textContent = 'Bereit zur Aufnahme';
       cassette.classList.remove('spinning');
       currentPlayingAudio = null;
     };
-
     currentPlayingAudio.onerror = () => {
       statusEl.textContent = 'Fehler bei der Wiedergabe';
       cassette.classList.remove('spinning');
@@ -735,7 +711,6 @@ h2 {
       currentPlayingAudio = null;
     };
   }
-
   function saveRecording() {
     if (currentAudioBlob) {
       const timestamp = new Date().toLocaleString('de-DE');
@@ -745,23 +720,19 @@ h2 {
         blob: currentAudioBlob,
         duration: timerEl.textContent
       };
-
       savedRecordings.push(recording);
       updateRecordingsList();
-
       statusEl.textContent = '✓ Aufnahme gespeichert';
       setTimeout(() => {
         statusEl.textContent = 'Bereit zur Aufnahme';
       }, 2000);
     }
   }
-
   function updateRecordingsList() {
     if (savedRecordings.length === 0) {
       recordingsList.innerHTML = '<div class="no-recordings">Keine Aufnahmen vorhanden</div>';
       return;
     }
-
     recordingsList.innerHTML = savedRecordings.map(rec => `
       <div class="recording-item">
         <div class="recording-name">${rec.name} (${rec.duration})</div>
@@ -773,38 +744,31 @@ h2 {
       </div>
     `).join('');
   }
-
   window.playRecording = function(id) {
     const recording = savedRecordings.find(r => r.id === id);
     if (!recording) {
       console.error('Aufnahme nicht gefunden');
       return;
     }
-
     if (currentPlayingAudio) {
       currentPlayingAudio.pause();
       currentPlayingAudio = null;
       cassette.classList.remove('spinning');
     }
-
     const audioUrl = URL.createObjectURL(recording.blob);
     currentPlayingAudio = new Audio(audioUrl);
-
     cassette.classList.add('spinning');
     statusEl.textContent = `▶ Spiele "${recording.name}"`;
-
     currentPlayingAudio.play().catch(err => {
       console.error('Fehler beim Abspielen:', err);
       statusEl.textContent = 'Fehler bei der Wiedergabe';
       cassette.classList.remove('spinning');
     });
-
     currentPlayingAudio.onended = () => {
       statusEl.textContent = 'Bereit zur Aufnahme';
       cassette.classList.remove('spinning');
       currentPlayingAudio = null;
     };
-
     currentPlayingAudio.onerror = () => {
       statusEl.textContent = 'Fehler bei der Wiedergabe';
       cassette.classList.remove('spinning');
@@ -812,7 +776,6 @@ h2 {
       currentPlayingAudio = null;
     };
   };
-
   window.downloadRecording = function(id) {
     const recording = savedRecordings.find(r => r.id === id);
     if (recording) {
@@ -824,12 +787,10 @@ h2 {
       URL.revokeObjectURL(url);
     }
   };
-
   window.deleteRecording = function(id) {
     savedRecordings = savedRecordings.filter(r => r.id !== id);
     updateRecordingsList();
   };
-
   recordBtn.addEventListener('click', () => {
     if (isRecording) {
       stopRecording();
@@ -837,42 +798,48 @@ h2 {
       startRecording();
     }
   });
-
   saveBtn.addEventListener('click', saveRecording);
-
   initRecorder();
-
   /* ========== Coffee Modal JS ========== */
   const coffeeHUD = document.getElementById("coffeeHUD");
   const coffeeModal = document.getElementById("coffeeModal");
   const coffeeClose = document.getElementById("coffeeClose");
-
   function openCoffeeModal() {
     coffeeModal.classList.add("is-open");
     coffeeModal.setAttribute("aria-hidden", "false");
     coffeeClose.focus();
   }
-
   function closeCoffeeModal() {
     coffeeModal.classList.remove("is-open");
     coffeeModal.setAttribute("aria-hidden", "true");
     coffeeHUD.focus();
   }
-
   coffeeHUD.addEventListener("click", openCoffeeModal);
   coffeeClose.addEventListener("click", closeCoffeeModal);
-
   coffeeModal.addEventListener("click", event => {
     if (event.target === coffeeModal) {
       closeCoffeeModal();
     }
   });
-
   document.addEventListener("keydown", event => {
     if (event.key === "Escape" && coffeeModal.classList.contains("is-open")) {
       closeCoffeeModal();
     }
   });
+
+  /* ========== Service Worker Registrierung (PWA) ========== */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("./sw.js")
+        .then((registration) => {
+          console.log("Service Worker registriert:", registration.scope);
+        })
+        .catch((error) => {
+          console.log("Service Worker Registrierung fehlgeschlagen:", error);
+        });
+    });
+  }
 </script>
 </body>
 </html>
