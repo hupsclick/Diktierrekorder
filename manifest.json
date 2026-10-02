@@ -3,13 +3,10 @@
   "short_name": "Diktiergerät",
   "description": "HUPSCLICK DIKTIERGERÄT",
   "start_url": "./",
-  "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#141414",
   "theme_color": "#00ff88",
-  "lang": "de",
-  "dir": "ltr",
   "icons": [
     {
       "src": "./assets/icon-192.png",
